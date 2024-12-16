@@ -110,7 +110,7 @@
                 "Greenland", "Grenada", "Guadeloupe", "Guam", "Guatemala", "Guernsey", "Guinea", "Guinea-Bissau", "Guyana",
                 "Haiti", "Heard Island & Mcdonald Islands", "Holy See (Vatican City State)", "Honduras", "Hong Kong",
                 "Hungary", "Iceland", "India", "Indonesia", "Iran", "Iraq", "Ireland", "Isle Of Man",
-                "Israel", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya", "Palestinian Territories", 
+                "Israel, the West Bank and Gaza", "Italy", "Jamaica", "Japan", "Jersey", "Jordan", "Kazakhstan", "Kenya",
                 "Kiribati", "North Korea (Democratic Peoples Republic of Korea)", "South Korea", "Kuwait",
                 "The Kyrgyz Republic", "Laos", "Latvia", "Lebanon", "Lesotho", "Liberia", "Libya", "Liechtenstein",
                 "Lithuania", "Luxembourg", "Macau", "North Macedonia", "Madagascar", "Malawi", "Malaysia", "Maldives",
@@ -282,7 +282,7 @@
             'IQ' => 'Iraq',
             'IE' => 'Ireland',
             'IM' => 'Isle Of Man',
-            'IL' => 'Israel',
+            'PS' => 'Israel, the West Bank and Gaza',
             'IT' => 'Italy',
             'JM' => 'Jamaica',
             'JP' => 'Japan',
@@ -352,7 +352,6 @@
             'PN' => 'Pitcairn',
             'PL' => 'Poland',
             'PT' => 'Portugal',
-            'PS' => 'Palestinian Territories',
             'PR' => 'Puerto Rico',
             'QA' => 'Qatar',
             'RE' => 'Reunion',
@@ -437,26 +436,30 @@
         ];
 
         $reversed_country_codes = array_flip($country_codes);
-        if (array_key_exists($inputCountry, $reversed_country_codes)) {
-            $countryCode = $reversed_country_codes[$inputCountry];
-            foreach ($advisories->Advisory as $advisory) {
-                if ((string)$advisory->CountryCode === $countryCode) {
-                    $level = (int)$advisory->Level;
-                    $date = (string)$advisory->Date;
-                    $message = $levelMessages[$level] ?? "Unknown level";
+if (array_key_exists($inputCountry, $reversed_country_codes)) {
+    $countryCode = $reversed_country_codes[$inputCountry];
+    foreach ($advisories->Advisory as $advisory) {
+        if ((string)$advisory->CountryCode === $countryCode) {
+            $level = (int)$advisory->Level;
+            $message = $levelMessages[$level] ?? "Unknown level";
+            $date = (string)$advisory->Date;
 
-                    echo "<p>Advisory for <strong>$inputCountry</strong>:<br> ";
-                    echo "<strong>Level:</strong> $level ($message)<br>";
-                    echo "<strong>Date Issued:</strong> $date</p>";
-                    return;
-                }
+            if ($level === 1 || $level === 2) {
+                echo "<p style='color: #69c54d; font-size: 36px; text-align: center;'>NO</p>";
+            } elseif ($level === 3) {
+                echo "<p style='color: #ff6600; font-size: 36px; text-align: center;'>Maybe</p>";
+            } elseif ($level === 4) {
+                echo "<p style='color: #C54D4D; font-size: 36px; text-align: center;'>YES</p>";
             }
-
-            echo "<p>No advisory found for $inputCountry.</p>";
-        } else {
-            echo "<p>Country not recognized. Please check your input.</p>";
+            echo "<p>Advisory for <strong>$inputCountry</strong>:<br> ";
+            echo "<strong>Level:</strong> $level ($message)<br>";
+            echo "<strong>Date Issued:</strong> $date</p>";
+            return;
         }
     }
+}
+    }
+
     ?>
     <div id="divmap">
         <object id="svgmap" type="image/svg+xml" data="world2.svg"></object>
